@@ -1,0 +1,11 @@
+/vendor
+.DS_Store
+/node_modules
+/build
+/dist
+/.idea
+.vscode
+*.log
+CLAUDE.md
+.env.local
+.env.*.local
