@@ -42,7 +42,12 @@ jobs:
         run: ./vendor/bin/phpunit
 
       - name: Run PHPStan analysis
-        run: ./vendor/bin/phpstan analyse src/
+        run: |
+          if [ -d "src/" ]; then
+            ./vendor/bin/phpstan analyse src/
+          else
+            echo "src/ directory does not exist yet, skipping PHPStan"
+          fi
 
       - name: Check PHP-CS-Fixer formatting
         run: ./vendor/bin/php-cs-fixer fix . --dry-run --diff
