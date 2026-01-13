@@ -1,0 +1,50 @@
+services:
+  frankenphp:
+    build:
+      context: .
+      dockerfile: docker/frankenphp/Dockerfile
+    container_name: frankenphp
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app:cached
+    environment:
+      APP_ENV: dev
+      SERVER_NAME: ":80"
+    depends_on:
+      - mariadb
+    networks:
+      - nesCore
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nescore
+      MYSQL_USER: nescore
+      MYSQL_PASSWORD: nescore
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - nesCore
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mariadb
+    networks:
+      - nesCore
+
+volumes:
+  mariadb_data:
+    driver: local
+
+networks:
+  nesCore:
+    driver: bridge
