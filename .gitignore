@@ -6,6 +6,7 @@
 /.idea
 .vscode
 *.log
+*.cache
 CLAUDE.md
 .env.local
 .env.*.local
