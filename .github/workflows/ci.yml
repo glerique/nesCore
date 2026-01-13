@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, setup]
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -34,7 +34,6 @@ jobs:
         with:
           php-version: '8.4'
           extensions: intl, zip, pdo_mysql
-          coverage: xdebug
 
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
