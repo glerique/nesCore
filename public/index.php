@@ -2,25 +2,15 @@
 
 declare(strict_types=1);
 
+use NesCore\Http\Kernel;
+use NesCore\Http\Request;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Simple router
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$request = Request::createFromGlobals();
 
-header('Content-Type: application/json');
 
-$response = match ($uri) {
-    '/' => json_encode([
-        'message' => 'FrankenPHP is running!',
-        'version' => PHP_VERSION,
-        'server' => 'FrankenPHP'
-    ]),
-    '/health' => json_encode(['status' => 'ok']),
-    default => null
-};
+$kernel = new Kernel();
+$response = $kernel->handle($request);
 
-if ($response !== null) {
-    echo $response;
-} else {
-    http_response_code(404);
-}
+$response->send();
