@@ -11,14 +11,14 @@ class Request
      * @param array<string, mixed> $postParams
      * @param array<string, mixed> $cookies
      * @param array<string, mixed> $files
-     * @param array<string, mixed> $server
+     * @param array<string, string|int|null> $server
      */
     public function __construct(
         public readonly array $getParams,
         public readonly array $postParams,
         public readonly array $cookies,
         public readonly array $files,
-        public readonly array $server
+        public readonly array $server,
     ) {
     }
 
