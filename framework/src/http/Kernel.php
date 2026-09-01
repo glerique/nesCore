@@ -6,6 +6,7 @@ namespace NesCore\Http;
 
 use NesCore\Http\Request;
 use NesCore\Http\Response;
+use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
@@ -35,8 +36,10 @@ class Kernel
 
         $routeInfo = $dispatcher->dispatch($method, $uri);
 
-        [$handler, $vars] = $routeInfo;
-
-        return $handler($vars);
+        return match ($routeInfo[0]) {
+            Dispatcher::NOT_FOUND => new Response('Not Found', 404),
+            Dispatcher::METHOD_NOT_ALLOWED => new Response('Method Not Allowed', 405),
+            Dispatcher::FOUND => $routeInfo[1]($routeInfo[2]),
+        };
     }
 }
