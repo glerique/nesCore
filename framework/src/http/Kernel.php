@@ -6,7 +6,6 @@ namespace NesCore\Http;
 
 use NesCore\Http\Request;
 use NesCore\Http\Response;
-use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
@@ -29,17 +28,15 @@ class Kernel
             });
         });
 
-        /** @var string $method */
-        $method = $request->server['REQUEST_METHOD'] ?? 'GET';
-        /** @var string $uri */
-        $uri = $request->server['REQUEST_URI'] ?? '/';
+        // Dispatch a URI, to obtain the route info
+        $routeInfo = $dispatcher->dispatch(
+            (string) $request->server['REQUEST_METHOD'],
+            (string) $request->server['REQUEST_URI'],
+        );
 
-        $routeInfo = $dispatcher->dispatch($method, $uri);
+        [$status, $handler, $vars] = $routeInfo;
 
-        return match ($routeInfo[0]) {
-            Dispatcher::NOT_FOUND => new Response('Not Found', 404),
-            Dispatcher::METHOD_NOT_ALLOWED => new Response('Method Not Allowed', 405),
-            Dispatcher::FOUND => $routeInfo[1]($routeInfo[2]),
-        };
+        // Call the handler, provided by the route info, in order to create a Response
+        return $handler($vars);
     }
 }
