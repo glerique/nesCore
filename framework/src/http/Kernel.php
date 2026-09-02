@@ -30,8 +30,8 @@ class Kernel
 
         // Dispatch a URI, to obtain the route info
         $routeInfo = $dispatcher->dispatch(
-            (string) $request->server['REQUEST_METHOD'],
-            (string) $request->server['REQUEST_URI'],
+            $request->getMethod(),
+            $request->getPathInfo()
         );
 
         [$status, $handler, $vars] = $routeInfo;
