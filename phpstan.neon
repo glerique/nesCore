@@ -6,4 +6,5 @@ parameters:
         - src
         - framework/src
         - tests
+        - routes
     checkMissingIterableValueType: true
