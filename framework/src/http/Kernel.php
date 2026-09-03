@@ -29,7 +29,7 @@ class Kernel
 
         [$status, [$controller, $method], $vars] = $routeInfo;
 
-        $response = (new $controller())->$method($vars);
+        $response = (new $controller())->$method(...$vars);
 
         return $response;
     }
