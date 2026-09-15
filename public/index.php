@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use NesCore\Routing\Router;
 use NesCore\Http\Kernel;
 use NesCore\Http\Request;
 
@@ -11,8 +12,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $request = Request::createFromGlobals();
 
-
-$kernel = new Kernel();
+$router = new Router();
+$kernel = new Kernel($router);
 $response = $kernel->handle($request);
 
 $response->send();
