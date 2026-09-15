@@ -4,32 +4,30 @@ declare(strict_types=1);
 
 namespace NesCore\Http;
 
+use NesCore\Routing\Router;
 use NesCore\Http\Request;
 use NesCore\Http\Response;
-use FastRoute\RouteCollector;
 
 use function FastRoute\simpleDispatcher;
 
 class Kernel
 {
+    public function __construct(private Router $router)
+    {
+    }
+
     public function handle(Request $request): Response
     {
-        $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
-            $routes = include BASE_PATH . '/routes/web.php';
+        try {
 
-            foreach ($routes as $route) {
-                $routeCollector->addRoute(...$route);
-            }
-        });
+            [$routeHandler, $vars] = $this->router->dispatch($request);
 
-        $routeInfo = $dispatcher->dispatch(
-            $request->getMethod(),
-            $request->getPathInfo()
-        );
+            $response = call_user_func_array($routeHandler, $vars);
 
-        [$status, [$controller, $method], $vars] = $routeInfo;
+        } catch (\Exception $exception) {
 
-        $response = (new $controller())->$method(...$vars);
+            $response = new Response($exception->getMessage(), 400);
+        }
 
         return $response;
     }
