@@ -4,15 +4,33 @@ declare(strict_types=1);
 
 namespace NesCore\Http;
 
+use NesCore\Exception\HttpException;
 use NesCore\Http\Request;
 use NesCore\Http\Response;
+use NesCore\Routing\Router;
+
+use function FastRoute\simpleDispatcher;
 
 class Kernel
 {
+    public function __construct(private Router $router)
+    {
+    }
+
     public function handle(Request $request): Response
     {
-        $content = "<h1>Hello, World!</h1>";
+        try {
 
-        return new Response($content);
+            [$routeHandler, $vars] = $this->router->dispatch($request);
+
+            $response = call_user_func_array($routeHandler, $vars);
+
+        } catch (HttpException $exception) {
+            $response = new Response($exception->getMessage(), $exception->getStatusCode());
+        } catch (\Exception $exception) {
+            $response = new Response($exception->getMessage(), 500);
+        }
+
+        return $response;
     }
 }
