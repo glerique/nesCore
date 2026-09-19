@@ -21,7 +21,12 @@ class Router implements RouterInterface
 
         [$controller, $method] = $handler;
 
-        return [[new $controller(), $method], $vars];
+        if (is_array($handler)) {
+            [$controller, $method] = $handler;
+            $handler = [new $controller(), $method];
+        }
+
+        return [$handler, $vars];
     }
 
     private function extractRouteInfo(Request $request): array
@@ -38,9 +43,13 @@ class Router implements RouterInterface
                 return [$routeInfo[1], $routeInfo[2]];
             case Dispatcher::METHOD_NOT_ALLOWED:
                 $allowedMethods = implode(', ', $routeInfo[1]);
-                throw new HttpRequestMethodException("The allowed methods are $allowedMethods");
+                $e = new HttpRequestMethodException("The allowed methods are $allowedMethods");
+                $e->setStatusCode(405);
+                throw $e;
             default:
-                throw new HttpException('Not found');
+                $e = new HttpException('Not found');
+                $e->setStatusCode(404);
+                throw $e;
         }
     }
 }
