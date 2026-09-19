@@ -29,9 +29,7 @@ class Request
 
     public function getPathInfo(): string
     {
-        $pathInfo = strtok((string) $this->server['REQUEST_URI'], '?');
-
-        return $pathInfo === false ? '/' : $pathInfo;
+        return strtok((string) $this->server['REQUEST_URI'], '?') ?: '/';
     }
 
     public function getMethod(): string
